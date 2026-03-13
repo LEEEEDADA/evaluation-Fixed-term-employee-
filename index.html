@@ -529,7 +529,7 @@
 
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="resetForm()">🔄 초기화</button>
-          <button class="btn btn-primary" onclick="saveEvaluation()">💾 평가 저장</button>
+          <button class="btn btn-primary" onclick="saveEvaluation()">📨 평가 제출</button>
         </div>
       </div>
     </div>
@@ -694,7 +694,6 @@ function saveEvaluation() {
     name: document.getElementById('emp-name').value.trim(),
     empId: document.getElementById('emp-id').value.trim(),
     dept: document.getElementById('emp-dept').value.trim(),
-    role: document.getElementById('emp-role').value.trim(),
     contractStart: document.getElementById('emp-start').value,
     contractEnd: document.getElementById('emp-end').value,
     evaluator: document.getElementById('evaluator-name').value.trim(),
@@ -708,7 +707,7 @@ function saveEvaluation() {
 
   evaluations.push(record);
   localStorage.setItem('evaluations', JSON.stringify(evaluations));
-  showToast('✅ 평가가 저장되었습니다!');
+  showToast('✅ 제출되었습니다!');
   resetForm();
   renderList();
 }
