@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>계약직 계약 연장 평가 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1eb;
+    --surface: #ffffff;
+    --accent: #1a3a2a;
+    --accent2: #4a7c5f;
+    --accent3: #c8b89a;
+    --danger: #c0392b;
+    --warn: #e67e22;
+    --text: #1c1c1c;
+    --text-muted: #6b6b6b;
+    --border: #d9d4c8;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  }
+  header .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  header .logo-icon {
+    width: 40px; height: 40px;
+    background: var(--accent3);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+  header .subtitle { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  header .actions { display: flex; gap: 10px; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+  }
+  .tab-btn {
+    padding: 16px 24px;
+    border: none;
+    background: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-weight: 400;
+  }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 700;
+  }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* ── LAYOUT ── */
+  main { padding: 36px 40px; max-width: 1100px; margin: 0 auto; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── FORM CARD ── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    background: var(--accent);
+    color: #fff;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-header .icon { font-size: 20px; }
+  .card-header h2 { font-size: 16px; font-weight: 500; }
+  .card-body { padding: 28px; }
+
+  /* ── FORM FIELDS ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+  input[type="text"], input[type="date"], select, textarea {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent2); }
+
+  /* ── RATING SECTION ── */
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rating-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f0ede6;
+  }
+  .rating-row:last-child { border-bottom: none; }
+  .rating-label { font-size: 14px; font-weight: 500; }
+  .rating-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .star-group { display: flex; gap: 6px; }
+  .star-btn {
+    width: 34px; height: 34px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .star-btn:hover, .star-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: scale(1.1);
+  }
+  .star-btn.s1.active { background: var(--danger); border-color: var(--danger); }
+  .star-btn.s2.active { background: var(--warn); border-color: var(--warn); }
+  .star-btn.s3.active { background: #f1c40f; border-color: #f1c40f; color: var(--text); }
+  .star-btn.s4.active { background: var(--accent2); border-color: var(--accent2); }
+  .star-btn.s5.active { background: var(--accent); border-color: var(--accent); }
+
+  /* ── FINAL DECISION ── */
+  .decision-group {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .decision-btn {
+    flex: 1;
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .decision-btn:hover { transform: translateY(-2px); }
+  .decision-btn.extend { border-color: var(--accent2); color: var(--accent2); }
+  .decision-btn.extend.active { background: var(--accent2); color: #fff; box-shadow: 0 4px 16px rgba(74,124,95,0.3); }
+  .decision-btn.pending { border-color: var(--warn); color: var(--warn); }
+  .decision-btn.pending.active { background: var(--warn); color: #fff; }
+  .decision-btn.terminate { border-color: var(--danger); color: var(--danger); }
+  .decision-btn.terminate.active { background: var(--danger); color: #fff; box-shadow: 0 4px 16px rgba(192,57,43,0.3); }
+
+  /* ── SCORE SUMMARY ── */
+  .score-bar-container {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  .score-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .score-num {
+    font-size: 42px;
+    font-family: 'DM Serif Display', serif;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--accent);
+    color: #fff;
+  }
+  .score-bar-track {
+    background: var(--border);
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .btn {
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-green { background: #27ae60; color: #fff; }
+  .btn-green:hover { background: #219150; }
+  .btn-row { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+
+  /* ── RESULTS TABLE ── */
+  .results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .results-count {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  thead { background: var(--accent); color: #fff; }
+  th {
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+  }
+  td {
+    padding: 14px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid #f0ede6;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #faf9f6; }
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge-extend { background: #d5f0e3; color: #1a6b40; }
+  .badge-pending { background: #fdebd0; color: #a04000; }
+  .badge-terminate { background: #fde8e7; color: #922b21; }
+  .empty-state {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--text-muted);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 14px; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.35s ease;
+    z-index: 9999;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  @media (max-width: 700px) {
+    header { padding: 18px 20px; }
+    main { padding: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .tab-bar { padding: 0 16px; }
+    .tab-btn { padding: 14px 14px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📋</div>
+    <div>
+      <h1>계약 연장 평가 시스템</h1>
+      <div class="subtitle">Contract Employee Evaluation System</div>
+    </div>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('form')">✏️ 평가 입력</button>
+  <button class="tab-btn" onclick="switchTab('list')">📊 평가 목록</button>
+</div>
+
+<main>
+
+  <!-- ===== TAB 1: 평가 입력 ===== -->
+  <div class="tab-content active" id="tab-form">
+
+    <!-- 직원 기본 정보 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">👤</span>
+        <h2>직원 기본 정보</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>성명</label>
+            <input type="text" id="emp-name" placeholder="홍길동">
+          </div>
+          <div class="form-group">
+            <label>사번 / ID</label>
+            <input type="text" id="emp-id" placeholder="2024-001">
+          </div>
+          <div class="form-group">
+            <label>부서</label>
+            <input type="text" id="emp-dept" placeholder="마케팅팀">
+          </div>
+          <div class="form-group">
+            <label>직책</label>
+            <input type="text" id="emp-role" placeholder="계약직 사원">
+          </div>
+          <div class="form-group">
+            <label>계약 시작일</label>
+            <input type="date" id="emp-start">
+          </div>
+          <div class="form-group">
+            <label>계약 만료일</label>
+            <input type="date" id="emp-end">
+          </div>
+          <div class="form-group">
+            <label>평가자 (담당 HR)</label>
+            <input type="text" id="evaluator-name" placeholder="김인사">
+          </div>
+          <div class="form-group">
+            <label>평가 날짜</label>
+            <input type="date" id="eval-date">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 업무 성과 평가 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">🎯</span>
+        <h2>업무 성과 평가</h2>
+      </div>
+      <div class="card-body">
+        <div class="section-title">📈 성과 항목 (각 항목을 1~5점으로 평가하세요)</div>
+
+        <div id="performance-ratings">
+          <!-- 동적 생성 -->
+        </div>
+
+        <div class="score-bar-container">
+          <div class="score-total">
+            <div>
+              <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">업무 성과 평균 점수</div>
+              <div class="score-num" id="perf-score">–</div>
+            </div>
+            <div class="score-badge" id="perf-badge" style="opacity:0">–</div>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="perf-bar"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 역량/태도 평가 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">💡</span>
+        <h2>역량 / 태도 평가</h2>
+      </div>
+      <div class="card-body">
+        <div class="section-title">🌱 역량 항목 (각 항목을 1~5점으로 평가하세요)</div>
+
+        <div id="attitude-ratings">
+          <!-- 동적 생성 -->
+        </div>
+
+        <div class="score-bar-container">
+          <div class="score-total">
+            <div>
+              <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">역량/태도 평균 점수</div>
+              <div class="score-num" id="att-score">–</div>
+            </div>
+            <div class="score-badge" id="att-badge" style="opacity:0">–</div>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="att-bar"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 종합 의견 & 최종 결정 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="icon">📝</span>
+        <h2>종합 의견 및 최종 결정</h2>
+      </div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:24px">
+          <label>종합 의견 (자유롭게 작성)</label>
+          <textarea id="comments" rows="4" placeholder="해당 직원의 업무 수행 전반에 대한 의견을 작성해 주세요."></textarea>
+        </div>
+
+        <div class="section-title">🔖 최종 계약 연장 결정</div>
+        <div class="decision-group">
+          <button class="decision-btn extend" onclick="setDecision('연장')">✅ 계약 연장</button>
+          <button class="decision-btn pending" onclick="setDecision('보류')">⏳ 보류 / 재검토</button>
+          <button class="decision-btn terminate" onclick="setDecision('종료')">❌ 계약 종료</button>
+        </div>
+        <input type="hidden" id="final-decision" value="">
+
+        <div class="score-bar-container" style="margin-top:24px">
+          <div class="score-total">
+            <div>
+              <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">종합 평균 점수</div>
+              <div class="score-num" id="total-score">–</div>
+            </div>
+            <div class="score-badge" id="total-badge" style="opacity:0">–</div>
+          </div>
+          <div class="score-bar-track"><div class="score-bar-fill" id="total-bar"></div></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="resetForm()">🔄 초기화</button>
+          <button class="btn btn-primary" onclick="saveEvaluation()">💾 평가 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: 평가 목록 ===== -->
+  <div class="tab-content" id="tab-list">
+    <div class="results-header">
+      <div>
+        <h2 style="font-size:20px;font-weight:700">저장된 평가 목록</h2>
+        <div class="results-count" id="results-count">총 0건</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-green" onclick="exportCSV()">📥 CSV 다운로드</button>
+        <button class="btn btn-danger" onclick="clearAll()">🗑️ 전체 삭제</button>
+      </div>
+    </div>
+
+    <div id="results-container">
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <div style="font-size:15px;font-weight:500;margin-bottom:6px">저장된 평가가 없습니다</div>
+        <div style="font-size:13px">평가 입력 탭에서 평가를 작성하고 저장해 주세요.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ─── 평가 항목 데이터 ───
+const performanceItems = [
+  { id: 'p1', label: '목표 달성도', desc: '주어진 업무 목표를 얼마나 달성했는가' },
+  { id: 'p2', label: '업무 품질', desc: '결과물의 정확도, 완성도, 완결성' },
+  { id: 'p3', label: '업무 속도 및 효율', desc: '제한된 시간 내 성과 창출 능력' },
+  { id: 'p4', label: '문제 해결력', desc: '업무 중 발생하는 문제를 주도적으로 해결하는 능력' },
+];
+const attitudeItems = [
+  { id: 'a1', label: '협업 및 커뮤니케이션', desc: '동료 및 유관부서와의 협력 태도' },
+  { id: 'a2', label: '책임감', desc: '업무에 대한 주인의식 및 책임 있는 자세' },
+  { id: 'a3', label: '학습 의지 및 성장', desc: '새로운 것을 배우고 발전하려는 태도' },
+  { id: 'a4', label: '근태 및 기본 자세', desc: '출근 성실도, 규정 준수, 예의' },
+];
+
+const scoreLabels = { 1: '매우 미흡', 2: '미흡', 3: '보통', 4: '우수', 5: '매우 우수' };
+let evaluations = JSON.parse(localStorage.getItem('evaluations') || '[]');
+
+// ─── 별점 UI 렌더링 ───
+function renderRatings(items, containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = items.map(item => `
+    <div class="rating-row" id="row-${item.id}">
+      <div>
+        <div class="rating-label">${item.label}</div>
+        <div class="rating-desc">${item.desc}</div>
+      </div>
+      <div class="star-group">
+        ${[1,2,3,4,5].map(n => `
+          <button class="star-btn s${n}" onclick="setScore('${item.id}',${n})" title="${n}점 – ${scoreLabels[n]}">${n}</button>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function setScore(itemId, score) {
+  // 버튼 활성화
+  [1,2,3,4,5].forEach(n => {
+    const btn = document.querySelector(`#row-${itemId} .s${n}`);
+    btn.classList.toggle('active', n === score);
+  });
+  // 데이터 저장
+  window.scores = window.scores || {};
+  window.scores[itemId] = score;
+  updateScores();
+}
+
+function updateScores() {
+  const s = window.scores || {};
+
+  // 업무 성과 평균
+  const pVals = performanceItems.map(i => s[i.id]).filter(Boolean);
+  const pAvg = pVals.length === performanceItems.length
+    ? (pVals.reduce((a,b) => a+b, 0) / pVals.length).toFixed(1)
+    : null;
+
+  // 역량/태도 평균
+  const aVals = attitudeItems.map(i => s[i.id]).filter(Boolean);
+  const aAvg = aVals.length === attitudeItems.length
+    ? (aVals.reduce((a,b) => a+b, 0) / aVals.length).toFixed(1)
+    : null;
+
+  // 화면 업데이트
+  updateScoreUI('perf-score', 'perf-bar', 'perf-badge', pAvg);
+  updateScoreUI('att-score', 'att-bar', 'att-badge', aAvg);
+
+  // 종합
+  if (pAvg && aAvg) {
+    const total = ((parseFloat(pAvg) + parseFloat(aAvg)) / 2).toFixed(1);
+    updateScoreUI('total-score', 'total-bar', 'total-badge', total);
+  }
+}
+
+function updateScoreUI(scoreId, barId, badgeId, avg) {
+  const scoreEl = document.getElementById(scoreId);
+  const barEl = document.getElementById(barId);
+  const badgeEl = document.getElementById(badgeId);
+  if (!avg) { scoreEl.textContent = '–'; barEl.style.width = '0%'; badgeEl.style.opacity = '0'; return; }
+
+  scoreEl.textContent = avg;
+  barEl.style.width = (parseFloat(avg) / 5 * 100) + '%';
+  badgeEl.style.opacity = '1';
+
+  const n = parseFloat(avg);
+  if (n >= 4.5)      { badgeEl.textContent = '탁월'; badgeEl.style.background = '#1a3a2a'; }
+  else if (n >= 3.5) { badgeEl.textContent = '우수'; badgeEl.style.background = '#4a7c5f'; }
+  else if (n >= 2.5) { badgeEl.textContent = '보통'; badgeEl.style.background = '#e67e22'; }
+  else               { badgeEl.textContent = '미흡'; badgeEl.style.background = '#c0392b'; }
+}
+
+// ─── 최종 결정 ───
+function setDecision(val) {
+  document.getElementById('final-decision').value = val;
+  document.querySelectorAll('.decision-btn').forEach(b => b.classList.remove('active'));
+  const map = { '연장': 'extend', '보류': 'pending', '종료': 'terminate' };
+  document.querySelector(`.decision-btn.${map[val]}`).classList.add('active');
+}
+
+// ─── 저장 ───
+function saveEvaluation() {
+  const required = ['emp-name','emp-id','emp-dept','evaluator-name','eval-date'];
+  for (const id of required) {
+    if (!document.getElementById(id).value.trim()) {
+      showToast('⚠️ 필수 항목을 모두 입력해 주세요 (성명, 사번, 부서, 평가자, 날짜)');
+      return;
+    }
+  }
+
+  const s = window.scores || {};
+  const allItems = [...performanceItems, ...attitudeItems];
+  const missing = allItems.filter(i => !s[i.id]);
+  if (missing.length) {
+    showToast('⚠️ 모든 평가 항목의 점수를 입력해 주세요');
+    return;
+  }
+  if (!document.getElementById('final-decision').value) {
+    showToast('⚠️ 최종 계약 결정을 선택해 주세요');
+    return;
+  }
+
+  const pVals = performanceItems.map(i => s[i.id]);
+  const aVals = attitudeItems.map(i => s[i.id]);
+  const pAvg = (pVals.reduce((a,b) => a+b,0) / pVals.length).toFixed(1);
+  const aAvg = (aVals.reduce((a,b) => a+b,0) / aVals.length).toFixed(1);
+  const total = ((parseFloat(pAvg)+parseFloat(aAvg))/2).toFixed(1);
+
+  const record = {
+    id: Date.now(),
+    date: document.getElementById('eval-date').value,
+    name: document.getElementById('emp-name').value.trim(),
+    empId: document.getElementById('emp-id').value.trim(),
+    dept: document.getElementById('emp-dept').value.trim(),
+    role: document.getElementById('emp-role').value.trim(),
+    contractStart: document.getElementById('emp-start').value,
+    contractEnd: document.getElementById('emp-end').value,
+    evaluator: document.getElementById('evaluator-name').value.trim(),
+    scores: {...s},
+    perfAvg: pAvg,
+    attAvg: aAvg,
+    totalAvg: total,
+    decision: document.getElementById('final-decision').value,
+    comments: document.getElementById('comments').value.trim(),
+  };
+
+  evaluations.push(record);
+  localStorage.setItem('evaluations', JSON.stringify(evaluations));
+  showToast('✅ 평가가 저장되었습니다!');
+  resetForm();
+  renderList();
+}
+
+// ─── 초기화 ───
+function resetForm() {
+  ['emp-name','emp-id','emp-dept','emp-role','evaluator-name','comments'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  ['emp-start','emp-end','eval-date'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('final-decision').value = '';
+  document.querySelectorAll('.decision-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('active'));
+  window.scores = {};
+  updateScores();
+}
+
+// ─── 목록 렌더링 ───
+function renderList() {
+  const container = document.getElementById('results-container');
+  document.getElementById('results-count').textContent = `총 ${evaluations.length}건`;
+
+  if (!evaluations.length) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">📭</div><div style="font-size:15px;font-weight:500;margin-bottom:6px">저장된 평가가 없습니다</div><div style="font-size:13px">평가 입력 탭에서 평가를 작성하고 저장해 주세요.</div></div>`;
+    return;
+  }
+
+  const decBadge = { '연장': 'extend', '보류': 'pending', '종료': 'terminate' };
+  const decText = { '연장': '계약 연장', '보류': '보류', '종료': '계약 종료' };
+
+  container.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>평가일</th>
+          <th>성명</th>
+          <th>부서</th>
+          <th>계약 만료일</th>
+          <th>업무 성과</th>
+          <th>역량/태도</th>
+          <th>종합</th>
+          <th>최종 결정</th>
+          <th>평가자</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${evaluations.slice().reverse().map(r => `
+          <tr>
+            <td>${r.date || '–'}</td>
+            <td><strong>${r.name}</strong><br><span style="font-size:11px;color:var(--text-muted)">${r.empId}</span></td>
+            <td>${r.dept}</td>
+            <td>${r.contractEnd || '–'}</td>
+            <td style="text-align:center">${r.perfAvg} / 5</td>
+            <td style="text-align:center">${r.attAvg} / 5</td>
+            <td style="text-align:center;font-weight:700">${r.totalAvg} / 5</td>
+            <td><span class="badge badge-${decBadge[r.decision]}">${decText[r.decision]}</span></td>
+            <td>${r.evaluator}</td>
+            <td><button class="btn btn-secondary" style="padding:6px 12px;font-size:12px" onclick="deleteEval(${r.id})">삭제</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ─── 삭제 ───
+function deleteEval(id) {
+  if (!confirm('이 평가를 삭제하시겠습니까?')) return;
+  evaluations = evaluations.filter(e => e.id !== id);
+  localStorage.setItem('evaluations', JSON.stringify(evaluations));
+  renderList();
+  showToast('🗑️ 삭제되었습니다');
+}
+
+function clearAll() {
+  if (!confirm('모든 평가 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+  evaluations = [];
+  localStorage.setItem('evaluations', JSON.stringify(evaluations));
+  renderList();
+  showToast('🗑️ 전체 삭제되었습니다');
+}
+
+// ─── CSV 다운로드 ───
+function exportCSV() {
+  if (!evaluations.length) { showToast('⚠️ 저장된 평가가 없습니다'); return; }
+
+  const headers = ['평가일','성명','사번','부서','직책','계약시작일','계약만료일','업무성과평균','역량태도평균','종합평균','최종결정','평가자','종합의견'];
+  const rows = evaluations.map(r => [
+    r.date, r.name, r.empId, r.dept, r.role,
+    r.contractStart, r.contractEnd,
+    r.perfAvg, r.attAvg, r.totalAvg,
+    r.decision, r.evaluator,
+    `"${(r.comments||'').replace(/"/g,'""')}"`
+  ]);
+
+  const csv = '\uFEFF' + [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `계약직평가_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 CSV 파일이 다운로드되었습니다');
+}
+
+// ─── 탭 전환 ───
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'list') renderList();
+}
+
+// ─── 토스트 ───
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── 초기 실행 ───
+document.addEventListener('DOMContentLoaded', () => {
+  renderRatings(performanceItems, 'performance-ratings');
+  renderRatings(attitudeItems, 'attitude-ratings');
+  document.getElementById('eval-date').value = new Date().toISOString().slice(0,10);
+  window.scores = {};
+});
+</script>
+</body>
+</html>
