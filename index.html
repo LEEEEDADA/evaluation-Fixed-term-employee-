@@ -405,10 +405,6 @@
             <input type="text" id="emp-dept" placeholder="마케팅팀">
           </div>
           <div class="form-group">
-            <label>직책</label>
-            <input type="text" id="emp-role" placeholder="">
-          </div>
-          <div class="form-group">
             <label>계약 시작일</label>
             <input type="date" id="emp-start">
           </div>
@@ -436,12 +432,14 @@
       </div>
       <div class="card-body">
         <div class="section-title">📈 성과 항목</div>
-        <div class="score-guide" style="display:flex;justify-content:flex-end;gap:0;margin-bottom:8px;font-size:11px;color:var(--text-muted);">
-          <span style="width:34px;text-align:center">매우<br>미흡</span>
-          <span style="width:34px;text-align:center">미흡</span>
-          <span style="width:34px;text-align:center">보통</span>
-          <span style="width:34px;text-align:center">우수</span>
-          <span style="width:34px;text-align:center">매우<br>우수</span>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:4px;padding-right:2px">
+          <div style="display:flex;gap:6px">
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">매우<br>미흡</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">미흡</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">보통</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">우수</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">매우<br>우수</span>
+          </div>
         </div>
 
         <div id="performance-ratings">
@@ -469,12 +467,14 @@
       </div>
       <div class="card-body">
         <div class="section-title">🌱 역량 및 태도 항목</div>
-        <div class="score-guide" style="display:flex;justify-content:flex-end;gap:0;margin-bottom:8px;font-size:11px;color:var(--text-muted);">
-          <span style="width:34px;text-align:center">매우<br>미흡</span>
-          <span style="width:34px;text-align:center">미흡</span>
-          <span style="width:34px;text-align:center">보통</span>
-          <span style="width:34px;text-align:center">우수</span>
-          <span style="width:34px;text-align:center">매우<br>우수</span>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:4px;padding-right:2px">
+          <div style="display:flex;gap:6px">
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">매우<br>미흡</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">미흡</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">보통</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">우수</span>
+            <span style="width:34px;text-align:center;font-size:11px;color:var(--text-muted);line-height:1.3">매우<br>우수</span>
+          </div>
         </div>
 
         <div id="attitude-ratings">
@@ -715,7 +715,7 @@ function saveEvaluation() {
 
 // ─── 초기화 ───
 function resetForm() {
-  ['emp-name','emp-id','emp-dept','emp-role','evaluator-name','comments'].forEach(id => {
+  ['emp-name','emp-id','emp-dept','evaluator-name','comments'].forEach(id => {
     document.getElementById(id).value = '';
   });
   ['emp-start','emp-end','eval-date'].forEach(id => {
