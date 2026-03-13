@@ -397,8 +397,8 @@
             <input type="text" id="emp-name" placeholder="홍길동">
           </div>
           <div class="form-group">
-            <label>사번 / ID</label>
-            <input type="text" id="emp-id" placeholder="2024-001">
+            <label>사번</label>
+            <input type="text" id="emp-id" placeholder="00000">
           </div>
           <div class="form-group">
             <label>부서</label>
@@ -406,7 +406,7 @@
           </div>
           <div class="form-group">
             <label>직책</label>
-            <input type="text" id="emp-role" placeholder="계약직 사원">
+            <input type="text" id="emp-role" placeholder="">
           </div>
           <div class="form-group">
             <label>계약 시작일</label>
@@ -417,7 +417,7 @@
             <input type="date" id="emp-end">
           </div>
           <div class="form-group">
-            <label>평가자 (담당 HR)</label>
+            <label>평가자</label>
             <input type="text" id="evaluator-name" placeholder="김인사">
           </div>
           <div class="form-group">
@@ -435,7 +435,14 @@
         <h2>업무 성과 평가</h2>
       </div>
       <div class="card-body">
-        <div class="section-title">📈 성과 항목 (각 항목을 1~5점으로 평가하세요)</div>
+        <div class="section-title">📈 성과 항목</div>
+        <div class="score-guide" style="display:flex;justify-content:flex-end;gap:0;margin-bottom:8px;font-size:11px;color:var(--text-muted);">
+          <span style="width:34px;text-align:center">매우<br>미흡</span>
+          <span style="width:34px;text-align:center">미흡</span>
+          <span style="width:34px;text-align:center">보통</span>
+          <span style="width:34px;text-align:center">우수</span>
+          <span style="width:34px;text-align:center">매우<br>우수</span>
+        </div>
 
         <div id="performance-ratings">
           <!-- 동적 생성 -->
@@ -461,7 +468,14 @@
         <h2>역량 / 태도 평가</h2>
       </div>
       <div class="card-body">
-        <div class="section-title">🌱 역량 항목 (각 항목을 1~5점으로 평가하세요)</div>
+        <div class="section-title">🌱 역량 및 태도 항목</div>
+        <div class="score-guide" style="display:flex;justify-content:flex-end;gap:0;margin-bottom:8px;font-size:11px;color:var(--text-muted);">
+          <span style="width:34px;text-align:center">매우<br>미흡</span>
+          <span style="width:34px;text-align:center">미흡</span>
+          <span style="width:34px;text-align:center">보통</span>
+          <span style="width:34px;text-align:center">우수</span>
+          <span style="width:34px;text-align:center">매우<br>우수</span>
+        </div>
 
         <div id="attitude-ratings">
           <!-- 동적 생성 -->
@@ -487,20 +501,7 @@
         <h2>종합 의견 및 최종 결정</h2>
       </div>
       <div class="card-body">
-        <div class="form-group" style="margin-bottom:24px">
-          <label>종합 의견 (자유롭게 작성)</label>
-          <textarea id="comments" rows="4" placeholder="해당 직원의 업무 수행 전반에 대한 의견을 작성해 주세요."></textarea>
-        </div>
-
-        <div class="section-title">🔖 최종 계약 연장 결정</div>
-        <div class="decision-group">
-          <button class="decision-btn extend" onclick="setDecision('연장')">✅ 계약 연장</button>
-          <button class="decision-btn pending" onclick="setDecision('보류')">⏳ 보류 / 재검토</button>
-          <button class="decision-btn terminate" onclick="setDecision('종료')">❌ 계약 종료</button>
-        </div>
-        <input type="hidden" id="final-decision" value="">
-
-        <div class="score-bar-container" style="margin-top:24px">
+        <div class="score-bar-container" style="margin-bottom:24px">
           <div class="score-total">
             <div>
               <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px">종합 평균 점수</div>
@@ -510,6 +511,21 @@
           </div>
           <div class="score-bar-track"><div class="score-bar-fill" id="total-bar"></div></div>
         </div>
+
+        <div class="form-group" style="margin-bottom:24px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label style="margin-bottom:0">종합 의견 (500자 이내)</label>
+            <span id="char-count" style="font-size:12px;color:var(--text-muted)">0 / 500</span>
+          </div>
+          <textarea id="comments" rows="4" maxlength="500" placeholder="해당 직원의 업무 수행 전반에 대한 의견을 작성해 주세요." oninput="document.getElementById('char-count').textContent=this.value.length+' / 500'"></textarea>
+        </div>
+
+        <div class="section-title">🔖 최종 계약 연장 결정</div>
+        <div class="decision-group">
+          <button class="decision-btn extend" onclick="setDecision('연장')">✅ 계약 연장</button>
+          <button class="decision-btn terminate" onclick="setDecision('종료')">❌ 계약 종료</button>
+        </div>
+        <input type="hidden" id="final-decision" value="">
 
         <div class="btn-row">
           <button class="btn btn-secondary" onclick="resetForm()">🔄 초기화</button>
@@ -551,7 +567,7 @@ const performanceItems = [
   { id: 'p1', label: '목표 달성도', desc: '주어진 업무 목표를 얼마나 달성했는가' },
   { id: 'p2', label: '업무 품질', desc: '결과물의 정확도, 완성도, 완결성' },
   { id: 'p3', label: '업무 속도 및 효율', desc: '제한된 시간 내 성과 창출 능력' },
-  { id: 'p4', label: '문제 해결력', desc: '업무 중 발생하는 문제를 주도적으로 해결하는 능력' },
+  { id: 'p4', label: '성과 기여도', desc: '팀 및 조직 목표에 실질적으로 기여한 정도' },
 ];
 const attitudeItems = [
   { id: 'a1', label: '협업 및 커뮤니케이션', desc: '동료 및 유관부서와의 협력 태도' },
@@ -640,7 +656,7 @@ function updateScoreUI(scoreId, barId, badgeId, avg) {
 function setDecision(val) {
   document.getElementById('final-decision').value = val;
   document.querySelectorAll('.decision-btn').forEach(b => b.classList.remove('active'));
-  const map = { '연장': 'extend', '보류': 'pending', '종료': 'terminate' };
+  const map = { '연장': 'extend', '종료': 'terminate' };
   document.querySelector(`.decision-btn.${map[val]}`).classList.add('active');
 }
 
